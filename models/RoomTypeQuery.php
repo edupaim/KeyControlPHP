@@ -3,25 +3,20 @@
 namespace app\models;
 
 /**
- * This is the ActiveQuery class for [[User]].
+ * This is the ActiveQuery class for [[RoomType]].
  *
- * @see User
+ * @see RoomType
  */
-class UserQuery extends \yii\db\ActiveQuery
+class RoomTypeQuery extends \yii\db\ActiveQuery
 {
     /*public function active()
     {
         return $this->andWhere('[[status]]=1');
     }*/
 
-    public function byUserName($user)
-    {
-        return $this->andWhere('user = :user', [':user' => $user]);
-    }
-
     /**
      * @inheritdoc
-     * @return User[]|array
+     * @return RoomType[]|array
      */
     public function all($db = null)
     {
@@ -30,7 +25,7 @@ class UserQuery extends \yii\db\ActiveQuery
 
     /**
      * @inheritdoc
-     * @return User|array|null
+     * @return RoomType|array|null
      */
     public function one($db = null)
     {

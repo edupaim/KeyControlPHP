@@ -59,7 +59,7 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getType0()
+    public function getType()
     {
         return $this->hasOne(UserType::className(), ['id' => 'type']);
     }
