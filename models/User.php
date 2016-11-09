@@ -14,7 +14,7 @@ use yii\web\IdentityInterface;
  * @property string $password
  * @property integer $type
  *
- * @property UserType $type0
+ * @property UserType $userType
  */
 class User extends \yii\db\ActiveRecord implements IdentityInterface
 {
@@ -59,7 +59,7 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getType()
+    public function getUserType()
     {
         return $this->hasOne(UserType::className(), ['id' => 'type']);
     }
