@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use app\models\UserType;
 use Yii;
 use app\models\User;
 use app\models\UserSearch;
@@ -48,9 +49,11 @@ class UserController extends Controller
         $searchModel = new UserSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
+        $typeList = UserType::find()->all();
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
+            'typeList' => $typeList
         ]);
     }
 
