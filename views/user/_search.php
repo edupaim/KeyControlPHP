@@ -6,6 +6,7 @@ use yii\widgets\ActiveForm;
 /* @var $this yii\web\View */
 /* @var $model app\models\UserSearch */
 /* @var $form yii\widgets\ActiveForm */
+/** @var array $typeList */
 ?>
 
 <div class="user-search">
@@ -23,7 +24,7 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'password') ?>
 
-    <?= $form->field($model, 'type') ?>
+    <?= $form->field($model, 'type')->dropDownList($typeList) ?>
 
     <div class="form-group">
         <?= Html::submitButton(Yii::t('app', 'Search'), ['class' => 'btn btn-primary']) ?>

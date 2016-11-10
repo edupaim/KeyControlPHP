@@ -2,10 +2,13 @@
 
 namespace app\controllers;
 
+use app\models\Customer;
+use app\models\CustomerSearch;
 use Yii;
 use app\models\Key;
 use app\models\KeySearch;
 use yii\filters\AccessControl;
+use yii\helpers\ArrayHelper;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -129,6 +132,26 @@ class KeyController extends Controller
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
+        }
+    }
+
+    public function actionBorrow()
+    {
+        $customerList = ArrayHelper::map(Customer::find()->all(), 'id', 'allAttributes');
+        $keyModel = new Key();
+        $keyList = ArrayHelper::map(Key::find()->all(), 'id', 'allAttributes');
+
+        if (Yii::$app->request->post()) {
+            $keyModel = $this->findModel(Yii::$app->request->post('Key')['id']);
+        }
+        if ($keyModel->load(Yii::$app->request->post()) && $keyModel->save()) {
+            return $this->redirect(['index']);
+        } else {
+            return $this->render('borrow', [
+                'customerList' => $customerList,
+                'keyModel' => $keyModel,
+                'keyList' => $keyList
+            ]);
         }
     }
 }

@@ -9,7 +9,7 @@ use Yii;
  *
  * @property integer $id
  * @property string $room
- * @property string $capacity
+ * @property integer $capacity
  * @property integer $room_type
  * @property integer $customer_id
  *
@@ -33,10 +33,9 @@ class Key extends \yii\db\ActiveRecord
     {
         return [
             [['room', 'capacity', 'room_type'], 'required'],
-            [['room_type', 'customer_id'], 'integer'],
-            [['room', 'capacity'], 'string', 'max' => 50],
+            [['room_type', 'customer_id', 'capacity'], 'integer'],
+            [['room'], 'string', 'max' => 50],
             [['room'], 'unique'],
-            [['capacity'], 'unique'],
             [['customer_id'], 'exist', 'skipOnError' => true, 'targetClass' => Customer::className(), 'targetAttribute' => ['customer_id' => 'id']],
             [['room_type'], 'exist', 'skipOnError' => true, 'targetClass' => RoomType::className(), 'targetAttribute' => ['room_type' => 'id']],
         ];
@@ -79,5 +78,10 @@ class Key extends \yii\db\ActiveRecord
     public static function find()
     {
         return new KeyQuery(get_called_class());
+    }
+
+    public function getAllAttributes()
+    {
+        return "$this->room - $this->capacity - {$this->roomType->name}";
     }
 }

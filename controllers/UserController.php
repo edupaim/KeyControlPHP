@@ -28,6 +28,10 @@ class UserController extends Controller
                     [
                         'allow' => true,
                         'roles' => ['@'],
+                        'matchCallback' => function($rule) {
+                            $user = Yii::$app->user->identity;
+                            return ($user->type == 1);
+                        }
                     ],
                 ],
             ],
@@ -48,8 +52,8 @@ class UserController extends Controller
     {
         $searchModel = new UserSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $typeList = \yii\helpers\ArrayHelper::map(UserType::find()->all(),'id','name');
 
-        $typeList = UserType::find()->all();
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,

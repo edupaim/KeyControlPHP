@@ -14,6 +14,9 @@ use Yii;
  */
 class UserType extends \yii\db\ActiveRecord
 {
+    const TYPE_ADMINISTRATOR = 1;
+    const TYPE_EMPLOYEE= 2;
+
     /**
      * @inheritdoc
      */

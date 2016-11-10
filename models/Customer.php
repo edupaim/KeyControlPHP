@@ -77,4 +77,9 @@ class Customer extends \yii\db\ActiveRecord
     {
         return new CustomerQuery(get_called_class());
     }
+
+    public function getAllAttributes()
+    {
+        return "$this->name - $this->registration";
+    }
 }

@@ -28,7 +28,10 @@
         "codeception/verify": "~0.3.1",
         "codeception/specify": "~0.4.3",
 
-        "raveren/kint": "*"
+        "raveren/kint": "*",
+
+        "kartik-v/yii2-krajee-base": "1.8.*",
+        "kartik-v/yii2-widget-select2": "2.0.*"
     },
     "config": {
         "process-timeout": 1800
