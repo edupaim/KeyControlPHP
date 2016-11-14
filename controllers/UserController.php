@@ -81,12 +81,14 @@ class UserController extends Controller
     public function actionCreate()
     {
         $model = new User();
+        $typeList = \yii\helpers\ArrayHelper::map(UserType::find()->all(),'id','name');
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
             return $this->render('create', [
                 'model' => $model,
+                'typeList' => $typeList
             ]);
         }
     }
@@ -100,12 +102,14 @@ class UserController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
+        $typeList = \yii\helpers\ArrayHelper::map(UserType::find()->all(),'id','name');
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
             return $this->render('update', [
                 'model' => $model,
+                'typeList' => $typeList
             ]);
         }
     }

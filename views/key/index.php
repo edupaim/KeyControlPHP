@@ -13,7 +13,7 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="key-index">
 
     <h1><?= Html::encode($this->title) ?></h1>
-    <?php echo $this->render('_search', ['model' => $searchModel]); ?>
+    <?php echo $this->render('_search', ['model' => $searchModel, 'typeList' => $typeList]); ?>
 
     <p>
         <?= Html::a(Yii::t('app', 'Create Key'), ['create'], ['class' => 'btn btn-success']) ?>
@@ -27,8 +27,17 @@ $this->params['breadcrumbs'][] = $this->title;
             'id',
             'room',
             'capacity',
-            'room_type',
-            'customer_id',
+            [
+                'attribute' => 'room_type',
+                'value' => 'roomType.name',
+                'filter' => $typeList
+            ],
+            [
+                'attribute' => 'customerName',
+                'value' => function ($item) {
+                    return $item->customer?$item->customer->name: "(Livre)";
+                },
+            ],
 
             ['class' => 'yii\grid\ActionColumn'],
         ],

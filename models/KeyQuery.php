@@ -31,4 +31,9 @@ class KeyQuery extends \yii\db\ActiveQuery
     {
         return parent::one($db);
     }
+
+    public function alreadyBorrowed()
+    {
+        return $this->andWhere('[[customer_id]] IS NOT NULL');
+    }
 }

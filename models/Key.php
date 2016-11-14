@@ -33,6 +33,7 @@ class Key extends \yii\db\ActiveRecord
     {
         return [
             [['room', 'capacity', 'room_type'], 'required'],
+            [['customer_id'], 'required', 'on'=>'borrow'],
             [['room_type', 'customer_id', 'capacity'], 'integer'],
             [['room'], 'string', 'max' => 50],
             [['room'], 'unique'],

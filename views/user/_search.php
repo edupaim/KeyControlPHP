@@ -6,7 +6,7 @@ use yii\widgets\ActiveForm;
 /* @var $this yii\web\View */
 /* @var $model app\models\UserSearch */
 /* @var $form yii\widgets\ActiveForm */
-/** @var array $typeList */
+/* @var array $typeList */
 ?>
 
 <div class="user-search">

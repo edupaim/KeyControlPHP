@@ -21,7 +21,7 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'capacity') ?>
 
-    <?= $form->field($model, 'room_type') ?>
+    <?= $form->field($model, 'room_type')->dropDownList($typeList) ?>
 
     <?= $form->field($model, 'customer_id') ?>
 

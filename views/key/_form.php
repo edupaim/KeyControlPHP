@@ -6,6 +6,7 @@ use yii\widgets\ActiveForm;
 /* @var $this yii\web\View */
 /* @var $model app\models\Key */
 /* @var $form yii\widgets\ActiveForm */
+/* @var array $typeList */
 ?>
 
 <div class="key-form">
@@ -16,7 +17,7 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'capacity')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'room_type')->textInput() ?>
+    <?= $form->field($model, 'room_type')->textInput()->dropDownList($typeList) ?>
 
     <?= $form->field($model, 'customer_id')->textInput() ?>
 

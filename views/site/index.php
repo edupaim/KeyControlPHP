@@ -10,3 +10,5 @@ if(!Yii::$app->user->isGuest){
 }
 echo \yii\bootstrap\Html::a('Keys',['key/index'],['class'=>['btn','btn-default','margin']]);
 echo \yii\bootstrap\Html::a('Customers',['customer/index'],['class'=>['btn','btn-default','margin']]);
+echo \yii\bootstrap\Html::a('Lend Keys',['key/borrow'],['class'=>['btn','btn-default','margin']]);
+echo \yii\bootstrap\Html::a('Return Keys',['key/return'],['class'=>['btn','btn-default','margin']]);

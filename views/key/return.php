@@ -19,13 +19,5 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="key-index">
 
     <h1><?= Html::encode($this->title) ?></h1>
-    <?php echo $this->render('_formBorrow',
-        [
-            'keyModel' => $keyModel,
-            'keyList' => $keyList,
-            'customerList' => $customerList,
-            'customerListDisabled' => $customerListDisabled,
-            'keyListDisabled' => $keyListDisabled
-        ]
-    ); ?>
+    <?php echo $this->render('_formReturn', ['keyModel' => $keyModel, 'keyList' => $keyList]); ?>
 </div>

@@ -12,6 +12,7 @@ use app\models\Key;
  */
 class KeySearch extends Key
 {
+    public $customerName;
     /**
      * @inheritdoc
      */
@@ -19,7 +20,7 @@ class KeySearch extends Key
     {
         return [
             [['id', 'room_type', 'customer_id'], 'integer'],
-            [['room', 'capacity'], 'safe'],
+            [['room', 'capacity', 'customerName'], 'safe'],
         ];
     }
 
@@ -64,8 +65,11 @@ class KeySearch extends Key
             'customer_id' => $this->customer_id,
         ]);
 
+        $query->joinWith('customer');
+
         $query->andFilterWhere(['like', 'room', $this->room])
-            ->andFilterWhere(['like', 'capacity', $this->capacity]);
+            ->andFilterWhere(['like', 'capacity', $this->capacity])
+            ->andFilterWhere(['like', 'customer.name', $this->customerName]);
 
         return $dataProvider;
     }
