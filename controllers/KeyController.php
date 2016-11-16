@@ -4,7 +4,9 @@ namespace app\controllers;
 
 use app\models\Customer;
 use app\models\CustomerSearch;
+use app\models\OperationHistory;
 use app\models\RoomType;
+use Faker\Provider\ka_GE\DateTime;
 use Yii;
 use app\models\Key;
 use app\models\KeySearch;
@@ -52,7 +54,7 @@ class KeyController extends Controller
     {
         $searchModel = new KeySearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-        $typeList = \yii\helpers\ArrayHelper::map(RoomType::find()->all(),'id','name');
+        $typeList = \yii\helpers\ArrayHelper::map(RoomType::find()->all(), 'id', 'name');
 
         return $this->render('index', [
             'searchModel' => $searchModel,
@@ -81,7 +83,7 @@ class KeyController extends Controller
     public function actionCreate()
     {
         $model = new Key();
-        $typeList = \yii\helpers\ArrayHelper::map(RoomType::find()->all(),'id','name');
+        $typeList = \yii\helpers\ArrayHelper::map(RoomType::find()->all(), 'id', 'name');
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -102,7 +104,7 @@ class KeyController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-        $typeList = \yii\helpers\ArrayHelper::map(RoomType::find()->all(),'id','name');
+        $typeList = \yii\helpers\ArrayHelper::map(RoomType::find()->all(), 'id', 'name');
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -152,18 +154,36 @@ class KeyController extends Controller
         $customerListDisabled = [];
         $keyListDisabled = [];
 
+        $operationHistory = new OperationHistory();
+
         foreach ($keyListBorrowed as $borrowed) {
             $customerListDisabled[$borrowed->customer_id] = ['disabled' => true];
             $keyListDisabled[$borrowed->id] = ['disabled' => true];
         }
 
         if (Yii::$app->request->post()) {
-            $keyModel = $this->findModel(Yii::$app->request->post('Key')['id']);
-            $keyModel->customer_id = Yii::$app->request->post('Key')['customer_id'];
-            if ($keyModel->save()) {
-                return $this->redirect(['index']);
+            $key_id = Yii::$app->request->post('Key')['id'];
+            $keyModel = $this->findModel($key_id);
+            $customer_id = Yii::$app->request->post('Key')['customer_id'];
+            $keyModel->customer_id = $customer_id;
+            $operationHistory->user_id = Yii::$app->user->identity->id;
+            $operationHistory->key_id = $key_id;
+            $operationHistory->customer_id = $customer_id;
+            $operationHistory->date = (new \DateTime('now', new \DateTimeZone('UTC')))->format('Y-m-d H:i:s');
+            $operationHistory->type = 1;
+            $db = Yii::$app->db;
+            $transaction = $db->beginTransaction();
+            try {
+                if ($keyModel->save() && $operationHistory->save()) {
+                    $transaction->commit();
+                    return $this->redirect(['index']);
+                }
+            } catch (\Exception $e) {
+                $transaction->rollBack();
+                throw $e;
             }
         }
+
         return $this->render('borrow', [
             'customerList' => $customerList,
             'keyModel' => $keyModel,
@@ -179,11 +199,29 @@ class KeyController extends Controller
         $keyModel = new Key();
         $keyList = ArrayHelper::map(Key::find()->alreadyBorrowed()->all(), 'id', 'allAttributes');
 
+        $operationHistory = new OperationHistory();
+
         if (Yii::$app->request->post()) {
             $keyModel = $this->findModel(Yii::$app->request->post('Key')['id']);
+            $customer_id = $keyModel->customer_id;
             $keyModel->customer_id = null;
-            if ($keyModel->save()) {
-                return $this->redirect(['index']);
+            $key_id = Yii::$app->request->post('Key')['id'];
+
+            $operationHistory->user_id = Yii::$app->user->identity->id;
+            $operationHistory->key_id = $key_id;
+            $operationHistory->customer_id = $customer_id;
+            $operationHistory->date = (new \DateTime('now', new \DateTimeZone('UTC')))->format('Y-m-d H:i:s');
+            $operationHistory->type = 2;
+            $db = Yii::$app->db;
+            $transaction = $db->beginTransaction();
+            try {
+                if ($keyModel->save() && $operationHistory->save()) {
+                    $transaction->commit();
+                    return $this->redirect(['index']);
+                }
+            } catch (\Exception $e) {
+                $transaction->rollBack();
+                throw $e;
             }
         }
         return $this->render('return', [

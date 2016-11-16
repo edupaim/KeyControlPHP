@@ -83,6 +83,11 @@ class Key extends \yii\db\ActiveRecord
 
     public function getAllAttributes()
     {
-        return "$this->room - $this->capacity - {$this->roomType->name}";
+        if($this->customer_id != null){
+            return "$this->room - $this->capacity - {$this->roomType->name} - Beneficiário: {$this->customer->name}";
+        } else {
+            return "$this->room - $this->capacity - {$this->roomType->name}";
+        }
+
     }
 }

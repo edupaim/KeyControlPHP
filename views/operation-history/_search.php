@@ -4,11 +4,11 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
 /* @var $this yii\web\View */
-/* @var $model app\models\KeySearch */
+/* @var $model app\models\OperationHistorySearch */
 /* @var $form yii\widgets\ActiveForm */
 ?>
 
-<div class="key-search">
+<div class="operation-history-search">
 
     <?php $form = ActiveForm::begin([
         'action' => ['index'],
@@ -17,13 +17,15 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'id') ?>
 
-    <?= $form->field($model, 'room') ?>
+    <?= $form->field($model, 'user_id') ?>
 
-    <?= $form->field($model, 'capacity') ?>
+    <?= $form->field($model, 'customer_id') ?>
 
-    <?= $form->field($model, 'room_type')->dropDownList($typeList) ?>
+    <?= $form->field($model, 'date') ?>
 
-    <?= $form->field($model, 'customerName') ?>
+    <?= $form->field($model, 'key_id') ?>
+
+    <?php // echo $form->field($model, 'type') ?>
 
     <div class="form-group">
         <?= Html::submitButton(Yii::t('app', 'Search'), ['class' => 'btn btn-primary']) ?>

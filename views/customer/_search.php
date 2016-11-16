@@ -21,7 +21,7 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'registration') ?>
 
-    <?= $form->field($model, 'type') ?>
+    <?= $form->field($model, 'type')->dropDownList($typeList) ?>
 
     <div class="form-group">
         <?= Html::submitButton(Yii::t('app', 'Search'), ['class' => 'btn btn-primary']) ?>

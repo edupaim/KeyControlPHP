@@ -2,20 +2,17 @@
 
 namespace app\controllers;
 
-use app\models\CustomerType;
 use Yii;
-use app\models\Customer;
-use app\models\CustomerSearch;
-use yii\filters\AccessControl;
-use yii\helpers\ArrayHelper;
+use app\models\OperationHistory;
+use app\models\OperationHistorySearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
 /**
- * CustomerController implements the CRUD actions for Customer model.
+ * OperationHistoryController implements the CRUD actions for OperationHistory model.
  */
-class CustomerController extends Controller
+class OperationHistoryController extends Controller
 {
     /**
      * @inheritdoc
@@ -23,15 +20,6 @@ class CustomerController extends Controller
     public function behaviors()
     {
         return [
-            'access' => [
-                'class' => AccessControl::className(),
-                'rules' => [
-                    [
-                        'allow' => true,
-                        'roles' => ['@'],
-                    ],
-                ],
-            ],
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
@@ -42,24 +30,22 @@ class CustomerController extends Controller
     }
 
     /**
-     * Lists all Customer models.
+     * Lists all OperationHistory models.
      * @return mixed
      */
     public function actionIndex()
     {
-        $searchModel = new CustomerSearch();
+        $searchModel = new OperationHistorySearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-        $typeList = ArrayHelper::map(CustomerType::find()->all(), 'id', 'name');
 
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
-            'typeList' => $typeList
         ]);
     }
 
     /**
-     * Displays a single Customer model.
+     * Displays a single OperationHistory model.
      * @param integer $id
      * @return mixed
      */
@@ -71,27 +57,25 @@ class CustomerController extends Controller
     }
 
     /**
-     * Creates a new Customer model.
+     * Creates a new OperationHistory model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
     public function actionCreate()
     {
-        $model = new Customer();
-        $typeList = ArrayHelper::map(CustomerType::find()->all(), 'id', 'name');
+        $model = new OperationHistory();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
             return $this->render('create', [
                 'model' => $model,
-                'typeList' => $typeList
             ]);
         }
     }
 
     /**
-     * Updates an existing Customer model.
+     * Updates an existing OperationHistory model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
      * @return mixed
@@ -99,20 +83,18 @@ class CustomerController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-        $typeList = ArrayHelper::map(CustomerType::find()->all(), 'id', 'name');
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
             return $this->render('update', [
                 'model' => $model,
-                'typeList' => $typeList
             ]);
         }
     }
 
     /**
-     * Deletes an existing Customer model.
+     * Deletes an existing OperationHistory model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
@@ -125,15 +107,15 @@ class CustomerController extends Controller
     }
 
     /**
-     * Finds the Customer model based on its primary key value.
+     * Finds the OperationHistory model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param integer $id
-     * @return Customer the loaded model
+     * @return OperationHistory the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = Customer::findOne($id)) !== null) {
+        if (($model = OperationHistory::findOne($id)) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');

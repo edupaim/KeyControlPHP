@@ -2,25 +2,25 @@
 
 use yii\db\Migration;
 
-class m161108_195059_customer_type extends Migration
+class m161116_173812_operation_type extends Migration
 {
     public function safeUp()
     {
-        $this->createTable('customer_type', [
+        $this->createTable('operation_type', [
             'id' => $this->primaryKey(),
             'name' => $this->string(50)->notNull()->unique()
         ]);
 
-        $this->batchInsert('customer_type',
+        $this->batchInsert('operation_type',
             ['id','name'],
-            [['id'=>1, 'name'=>'Aluno'], ['id'=>2, 'name'=>'Professor']]
+            [['id'=>1, 'name'=>'Empréstimo'], ['id'=>2, 'name'=>'Devolução']]
         );
 
         $this->addForeignKey(
-            'fk_customer_type',
-            'customer',
+            'fk_operation_type',
+            'operation_history',
             'type',
-            'customer_type',
+            'operation_type',
             'id',
             'CASCADE'
         );
@@ -28,12 +28,9 @@ class m161108_195059_customer_type extends Migration
 
     public function safeDown()
     {
-        $this->dropForeignKey(
-            'fk_customer_type',
-            'customer_type'
-        );
+        $this->dropForeignKey('fk_operation_type', 'type');
 
-        $this->dropTable('customer_type');
+        $this->dropTable('operation_history');
     }
 
     /*

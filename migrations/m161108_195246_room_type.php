@@ -4,7 +4,7 @@ use yii\db\Migration;
 
 class m161108_195246_room_type extends Migration
 {
-    public function up()
+    public function safeUp()
     {
         $this->createTable('room_type', [
             'id' => $this->primaryKey(),
@@ -28,7 +28,7 @@ class m161108_195246_room_type extends Migration
         );
     }
 
-    public function down()
+    public function safeDown()
     {
         $this->dropForeignKey(
             'fk_room_type',
