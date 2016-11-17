@@ -2,6 +2,7 @@
 
 use yii\helpers\Html;
 use yii\grid\GridView;
+use yii\helpers\Url;
 
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\UserSearch */
@@ -29,14 +30,21 @@ $this->params['breadcrumbs'][] = $this->title;
             'id',
             'name',
             'user',
-            'password',
             [
                 'attribute' => 'type',
                 'value' => 'userType.name',
                 'filter' => $typeList
             ],
 
-            ['class' => 'yii\grid\ActionColumn'],
-        ],
+            [
+                'class' => 'yii\grid\ActionColumn',
+                'template' => '{view} {update} {delete} {updatePassword}',
+                'buttons' => [
+                    'updatePassword' => function ($url, $model, $key) {
+                        return Html::a(\kartik\icons\Icon::show('Update', ['class' => 'glyphicon glyphicon-lock']), Url::to(['user/update-password', 'id' => $model->id]));
+                    }
+                ]
+            ]
+        ]
     ]); ?>
 </div>

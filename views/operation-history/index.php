@@ -15,9 +15,6 @@ $this->params['breadcrumbs'][] = $this->title;
     <h1><?= Html::encode($this->title) ?></h1>
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
-    <p>
-        <?= Html::a(Yii::t('app', 'Create Operation History'), ['create'], ['class' => 'btn btn-success']) ?>
-    </p>
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
@@ -25,13 +22,28 @@ $this->params['breadcrumbs'][] = $this->title;
             ['class' => 'yii\grid\SerialColumn'],
 
             'id',
-            'user_id',
-            'customer_id',
+            [
+                'attribute' => 'userName',
+                'value' => 'user.name'
+            ],
+            [
+                'attribute' => 'customerName',
+                'value' => 'customer.name'
+            ],
             'date',
-            'key_id',
-            // 'type',
-
-            ['class' => 'yii\grid\ActionColumn'],
+            [
+                'attribute' => 'keyRoom',
+                'value' => 'key.room'
+            ],
+            [
+                'attribute' => 'type',
+                'value' => 'type0.name',
+                'filter' => [1 => 'Empréstimo', 2 => 'Devolução']
+            ],
+            [
+                'class' => 'yii\grid\ActionColumn',
+                'template' => '{view}'
+            ],
         ],
     ]); ?>
 </div>

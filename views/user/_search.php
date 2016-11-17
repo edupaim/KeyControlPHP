@@ -22,8 +22,6 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'user') ?>
 
-    <?= $form->field($model, 'password') ?>
-
     <?= $form->field($model, 'type')->dropDownList($typeList) ?>
 
     <div class="form-group">

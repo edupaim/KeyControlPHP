@@ -20,7 +20,7 @@ use yii\filters\VerbFilter;
 /**
  * KeyController implements the CRUD actions for Key model.
  */
-class KeyController extends Controller
+class KeyController extends AccessController
 {
     /**
      * @inheritdoc
@@ -30,10 +30,14 @@ class KeyController extends Controller
         return [
             'access' => [
                 'class' => AccessControl::className(),
+                'only' => ['index', 'create', 'update', 'delete'],
                 'rules' => [
                     [
-                        'allow' => true,
+                        'allow' => false,
                         'roles' => ['@'],
+                        'matchCallback' => function($rule) {
+                            return $this->isAdmin;
+                        }
                     ],
                 ],
             ],
@@ -153,7 +157,7 @@ class KeyController extends Controller
         $keyListBorrowed = Key::find()->alreadyBorrowed()->all();
         $customerListDisabled = [];
         $keyListDisabled = [];
-
+        $customerModel = new Customer();
         $operationHistory = new OperationHistory();
 
         foreach ($keyListBorrowed as $borrowed) {
@@ -162,25 +166,27 @@ class KeyController extends Controller
         }
 
         if (Yii::$app->request->post()) {
+            $customerRegistration = Yii::$app->request->post('Customer')['registration'];
             $key_id = Yii::$app->request->post('Key')['id'];
             $keyModel = $this->findModel($key_id);
             $customer_id = Yii::$app->request->post('Key')['customer_id'];
-            $keyModel->customer_id = $customer_id;
-            $operationHistory->user_id = Yii::$app->user->identity->id;
-            $operationHistory->key_id = $key_id;
-            $operationHistory->customer_id = $customer_id;
-            $operationHistory->date = (new \DateTime('now', new \DateTimeZone('UTC')))->format('Y-m-d H:i:s');
-            $operationHistory->type = 1;
-            $db = Yii::$app->db;
-            $transaction = $db->beginTransaction();
-            try {
-                if ($keyModel->save() && $operationHistory->save()) {
-                    $transaction->commit();
-                    return $this->redirect(['index']);
+            $customer = Customer::find()->where(['id' => $customer_id])->one();
+            if($customer->registration == $customerRegistration){
+                $keyModel->customer_id = $customer_id;
+                $this->loadHistory($operationHistory, $key_id, $customer_id, 1);
+                $db = Yii::$app->db;
+                $transaction = $db->beginTransaction();
+                try {
+                    if ($keyModel->save() && $operationHistory->save()) {
+                        $transaction->commit();
+                        return $this->redirect(['index']);
+                    }
+                } catch (\Exception $e) {
+                    $transaction->rollBack();
+                    throw $e;
                 }
-            } catch (\Exception $e) {
-                $transaction->rollBack();
-                throw $e;
+            } else {
+                $customerModel->addError('registration', 'A matricula não corresponde ao do beneficiário.');
             }
         }
 
@@ -190,6 +196,7 @@ class KeyController extends Controller
             'keyList' => $keyList,
             'customerListDisabled' => $customerListDisabled,
             'keyListDisabled' => $keyListDisabled,
+            'customerModel' => $customerModel
         ]);
 
     }
@@ -207,11 +214,7 @@ class KeyController extends Controller
             $keyModel->customer_id = null;
             $key_id = Yii::$app->request->post('Key')['id'];
 
-            $operationHistory->user_id = Yii::$app->user->identity->id;
-            $operationHistory->key_id = $key_id;
-            $operationHistory->customer_id = $customer_id;
-            $operationHistory->date = (new \DateTime('now', new \DateTimeZone('UTC')))->format('Y-m-d H:i:s');
-            $operationHistory->type = 2;
+            $this->loadHistory($operationHistory, $key_id, $customer_id, 2);
             $db = Yii::$app->db;
             $transaction = $db->beginTransaction();
             try {
@@ -228,6 +231,21 @@ class KeyController extends Controller
             'keyModel' => $keyModel,
             'keyList' => $keyList
         ]);
+    }
+
+    /**
+     * @param $operationHistory
+     * @param $key_id
+     * @param $customer_id
+     * @param $operationType
+     */
+    public function loadHistory($operationHistory, $key_id, $customer_id, $operationType)
+    {
+        $operationHistory->user_id = Yii::$app->user->identity->id;
+        $operationHistory->key_id = $key_id;
+        $operationHistory->customer_id = $customer_id;
+        $operationHistory->date = (new \DateTime('now', new \DateTimeZone('UTC')))->format('Y-m-d H:i:s');
+        $operationHistory->type = $operationType;
     }
 
 

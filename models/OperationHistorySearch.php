@@ -12,6 +12,9 @@ use app\models\OperationHistory;
  */
 class OperationHistorySearch extends OperationHistory
 {
+    public $userName;
+    public $customerName;
+    public $keyRoom;
     /**
      * @inheritdoc
      */
@@ -19,7 +22,7 @@ class OperationHistorySearch extends OperationHistory
     {
         return [
             [['id', 'user_id', 'customer_id', 'key_id', 'type'], 'integer'],
-            [['date'], 'safe'],
+            [['date', 'userName', 'customerName', 'keyRoom'], 'safe'],
         ];
     }
 
@@ -57,6 +60,10 @@ class OperationHistorySearch extends OperationHistory
             return $dataProvider;
         }
 
+        $query->joinWith('customer');
+        $query->joinWith('user');
+        $query->joinWith('key');
+
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
@@ -65,7 +72,10 @@ class OperationHistorySearch extends OperationHistory
             'date' => $this->date,
             'key_id' => $this->key_id,
             'type' => $this->type,
-        ]);
+        ])
+            ->andFilterWhere(['like', 'user.name', $this->userName])
+            ->andFilterWhere(['like', 'customer.name', $this->customerName])
+            ->andFilterWhere(['like', 'key.room', $this->keyRoom]);
 
         return $dataProvider;
     }

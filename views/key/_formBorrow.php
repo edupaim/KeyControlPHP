@@ -33,6 +33,8 @@ use yii\widgets\ActiveForm;
         ],
     ]); ?>
 
+    <?= $form->field($customerModel, 'registration')->textInput() ?>
+
     <div class="form-group">
         <?= Html::submitButton(Yii::t('app', 'Borrow'), ['class' => 'btn btn-primary']) ?>
     </div>

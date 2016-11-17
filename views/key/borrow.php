@@ -25,7 +25,8 @@ $this->params['breadcrumbs'][] = $this->title;
             'keyList' => $keyList,
             'customerList' => $customerList,
             'customerListDisabled' => $customerListDisabled,
-            'keyListDisabled' => $keyListDisabled
+            'keyListDisabled' => $keyListDisabled,
+            'customerModel' => $customerModel
         ]
     ); ?>
 </div>

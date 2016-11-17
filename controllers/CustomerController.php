@@ -15,7 +15,7 @@ use yii\filters\VerbFilter;
 /**
  * CustomerController implements the CRUD actions for Customer model.
  */
-class CustomerController extends Controller
+class CustomerController extends AccessController
 {
     /**
      * @inheritdoc
@@ -25,10 +25,14 @@ class CustomerController extends Controller
         return [
             'access' => [
                 'class' => AccessControl::className(),
+                'only' => ['create', 'update', 'delete'],
                 'rules' => [
                     [
-                        'allow' => true,
+                        'allow' => false,
                         'roles' => ['@'],
+                        'matchCallback' => function($rule) {
+                            return $this->isAdmin;
+                        }
                     ],
                 ],
             ],

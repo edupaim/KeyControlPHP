@@ -80,6 +80,6 @@ class Customer extends \yii\db\ActiveRecord
 
     public function getAllAttributes()
     {
-        return "$this->name - $this->registration";
+        return "$this->name - " . substr($this->registration, 0, 4) . "...";
     }
 }

@@ -13,7 +13,9 @@ use yii\web\IdentityInterface;
  * @property string $user
  * @property string $password
  * @property integer $type
+ * @property string $createdDate
  *
+ * @property OperationHistory[] $operationHistories
  * @property UserType $userType
  */
 class User extends \yii\db\ActiveRecord implements IdentityInterface
@@ -32,8 +34,9 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
     public function rules()
     {
         return [
-            [['name', 'user', 'password', 'type'], 'required'],
+            [['name', 'user', 'password', 'type', 'createdDate'], 'required'],
             [['type'], 'integer'],
+            [['createdDate'], 'safe'],
             [['name', 'user', 'password'], 'string', 'max' => 50],
             [['name'], 'unique'],
             [['user'], 'unique'],
@@ -53,7 +56,16 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
             'user' => Yii::t('app', 'User'),
             'password' => Yii::t('app', 'Password'),
             'type' => Yii::t('app', 'Type'),
+            'createdDate' => Yii::t('app', 'Created Date'),
         ];
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getOperationHistories()
+    {
+        return $this->hasMany(OperationHistory::className(), ['user_id' => 'id']);
     }
 
     /**
@@ -140,6 +152,11 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
 
     public function validatePassword($password)
     {
-        return $this->password === $password;
+        return $this->password == self::generateMd5($password,$this->createdDate);
+    }
+
+    static function generateMd5($password, $date)
+    {
+        return md5($password . $date);
     }
 }

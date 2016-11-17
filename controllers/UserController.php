@@ -14,7 +14,7 @@ use yii\filters\VerbFilter;
 /**
  * UserController implements the CRUD actions for User model.
  */
-class UserController extends Controller
+class UserController extends AccessController
 {
     /**
      * @inheritdoc
@@ -24,13 +24,13 @@ class UserController extends Controller
         return [
             'access' => [
                 'class' => AccessControl::className(),
+                'only' => ['index', 'create', 'update', 'delete'],
                 'rules' => [
                     [
                         'allow' => true,
                         'roles' => ['@'],
-                        'matchCallback' => function($rule) {
-                            $user = Yii::$app->user->identity;
-                            return ($user->type == 1);
+                        'matchCallback' => function ($rule) {
+                            return $this->isAdmin;
                         }
                     ],
                 ],
@@ -52,7 +52,7 @@ class UserController extends Controller
     {
         $searchModel = new UserSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-        $typeList = \yii\helpers\ArrayHelper::map(UserType::find()->all(),'id','name');
+        $typeList = \yii\helpers\ArrayHelper::map(UserType::find()->all(), 'id', 'name');
 
         return $this->render('index', [
             'searchModel' => $searchModel,
@@ -69,6 +69,7 @@ class UserController extends Controller
     public function actionView($id)
     {
         return $this->render('view', [
+            'isAdmin' => $this->isAdmin(),
             'model' => $this->findModel($id),
         ]);
     }
@@ -81,16 +82,21 @@ class UserController extends Controller
     public function actionCreate()
     {
         $model = new User();
-        $typeList = \yii\helpers\ArrayHelper::map(UserType::find()->all(),'id','name');
+        $typeList = \yii\helpers\ArrayHelper::map(UserType::find()->all(), 'id', 'name');
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
-        } else {
-            return $this->render('create', [
-                'model' => $model,
-                'typeList' => $typeList
-            ]);
+        if (Yii::$app->request->post()) {
+            $model->load(Yii::$app->request->post());
+            $model->createdDate = (new \DateTime('now', new \DateTimeZone('UTC')))->format('Y-m-d H:i:s');
+            $model->password = User::generateMd5($model->password, $model->createdDate);
+            if ($model->save()) {
+                return $this->redirect(['view', 'id' => $model->id]);
+            }
         }
+
+        return $this->render('create', [
+            'model' => $model,
+            'typeList' => $typeList
+        ]);
     }
 
     /**
@@ -102,16 +108,20 @@ class UserController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-        $typeList = \yii\helpers\ArrayHelper::map(UserType::find()->all(),'id','name');
+        $typeList = \yii\helpers\ArrayHelper::map(UserType::find()->all(), 'id', 'name');
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
-        } else {
-            return $this->render('update', [
-                'model' => $model,
-                'typeList' => $typeList
-            ]);
+        if (Yii::$app->request->post()) {
+            $model->load(Yii::$app->request->post());
+            $model->password = User::generateMd5($model->password, $model->createdDate);
+            if ($model->save()) {
+                return $this->redirect(['view', 'id' => $model->id]);
+            }
         }
+
+        return $this->render('update', [
+            'model' => $model,
+            'typeList' => $typeList
+        ]);
     }
 
     /**
@@ -142,4 +152,23 @@ class UserController extends Controller
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
+
+    public function actionUpdatePassword($id)
+    {
+        $model = $this->findModel($id);
+        $model->password = '';
+
+        if (Yii::$app->request->post()) {
+            $password = Yii::$app->request->post('User')['password'];
+            $model->password = User::generateMd5($password, $model->createdDate);
+            if ($model->save()) {
+                return $this->redirect(['view', 'id' => $model->id]);
+            }
+        }
+
+        return $this->render('updatePassword', [
+            'model' => $model
+        ]);
+    }
+
 }
